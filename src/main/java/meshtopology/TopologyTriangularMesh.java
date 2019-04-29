@@ -250,7 +250,7 @@ public class TopologyTriangularMesh {
 		 */
 		System.out.println("Loop over array...");
 		startTime = System.nanoTime();
-		if(checkData == true) {
+		if(checkData == false) {
 			System.out.println("\n\tEdges extremes:");
 			for(int i=1; i<=N_ins; i++) {
 				//System.out.println( "\t\tedge " + i + " : " + Gamma_j[i][0] + "-" + Gamma_j[i][1] ); 
@@ -297,22 +297,22 @@ public class TopologyTriangularMesh {
 		 */
 		System.out.println("\nTopology summary:");
 		startTime = System.nanoTime();
-		if(checkData == true) {
+		if(checkData == false) {
 			System.out.println("\n\tEdges extremes:");
 			for(Integer edge : gamma_j.keySet()) {
-				//System.out.println( "\t\tedge " + edge + " : " + gamma_j.get(edge)[0] + "-" + gamma_j.get(edge)[1] ); 
+				System.out.println( "\t\tedge " + edge + " : " + gamma_j.get(edge)[0] + "-" + gamma_j.get(edge)[1] ); 
 			}
 			System.out.println("\n\tEdges of each element:");
 			for(Integer element : elementsVertices.keySet()) {
-				//System.out.print( "\t\telement " + element + " : ");
+				System.out.print( "\t\telement " + element + " : ");
 				for(Integer edge : s_i.get(element)) {
-					//System.out.print( edge + " "); 
+					System.out.print( edge + " "); 
 				}
-				//System.out.println("\n");
+				System.out.println("\n");
 			}
 			System.out.println("\n\tLeft and right element of each edge:");
 			for(Integer edge : gamma_j.keySet()) {
-				//System.out.println( "\t\tedge " + edge + " : left " + ll.get(edge) + " , right " + rr.get(edge)); 
+				System.out.println( "\t\tedge " + edge + " : left " + ll.get(edge) + " , right " + rr.get(edge)); 
 			}
 			System.out.println("...elapsed time was " + (System.nanoTime()-startTime)/1000000 + " ms" );
 			//System.out.println("...elapsed time was " + (System.nanoTime()-startTime) + " ns" );
