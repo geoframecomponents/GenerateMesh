@@ -56,18 +56,27 @@ public class Readmsh {
 	@In 
 	public boolean checkData = false;
 
+
+	@Out
+	public Map<Integer, Double[]> verticesCoordinates = new HashMap<Integer, Double[]>();
+	//public Map<Integer,Double> yCoordinates = new HashMap<Integer,Double>();
+	
+	@Out
+	public Map<Integer, Integer[]> elementsVertices = new HashMap<Integer, Integer[]>();
+	
+	@Out
+	public Map<Integer, Integer> elementsLabel = new HashMap<Integer, Integer>();
+	
+	@Out
+	public Map<Integer, Integer[]> borderEdgesVertices = new HashMap<Integer, Integer[]>();
+	
+	@Out
+	public Map<Integer, Integer> borderEdgesLabel = new HashMap<Integer, Integer>();
+
 	public int nVertices =-999;
 	public int nElements = -999;
 	public int nBorderEdges = -999;
-
-	public Map<Integer, Double[]> verticesCoordinates = new HashMap<Integer, Double[]>();
-	//public Map<Integer,Double> yCoordinates = new HashMap<Integer,Double>();
-	public Map<Integer, Integer[]> elementsVertices = new HashMap<Integer, Integer[]>();
-	public Map<Integer, Integer> elementsLabel = new HashMap<Integer, Integer>();
-	public Map<Integer, Integer[]> borderEdgesVertices = new HashMap<Integer, Integer[]>();
-	public Map<Integer, Integer> borderEdgesLabel = new HashMap<Integer, Integer>();
-
-
+	
 	/**
 	 * @param args
 	 * @throws IOException 
@@ -120,8 +129,8 @@ public class Readmsh {
 		System.out.println("Reading file completed. Elapsed time was " + (endTime-startTime)/1000000000 + " seconds" );
 
 		System.out.println("\n\t nVertices : " +nVertices);
-		System.out.println("\t   nElements : " +nElements);
-		System.out.println("\t   nBorderEdges : " +nBorderEdges);
+		System.out.println("\t nElements : " +nElements);
+		System.out.println("\t nBorderEdges : " +nBorderEdges);
 		
 		/*
 		 * Check informations are correctly stored

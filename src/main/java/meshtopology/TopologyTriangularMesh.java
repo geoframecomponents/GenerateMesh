@@ -37,48 +37,57 @@ import oms3.annotations.*;
  */
 public class TopologyTriangularMesh {
 
-	@In
+	//@In
 	public Map<Integer, Double[]> verticesCoordinates;
 
-	@In
+	//@In
 	public Map<Integer, Integer[]> elementsVertices;
 
-	@In
+	//@In
 	public Map<Integer, Integer[]> borderEdgesVertices;
 
-	@In
+	//@In
+	public Map<Integer, Integer> borderEdgesLabel;
+	
+	//@In
 	public boolean checkData;
-	
-	@Out
+
+	//@Out
 	public Map<Integer, Integer> ll;
-	
-	@Out
+
+	//@Out
 	public Map<Integer, Integer> rr;
-	
-	@Out
+
+	//@Out
+	public Map<Integer, Integer> boundaryLabel;
+
+	//@Out
 	public Map<Integer, Integer[]> gamma_j;
-	
-	@Out
+
+	//@Out
 	public Map<Integer, ArrayList<Integer>> s_i;
-	
-	
+
+	//@Out
+	public Map<Integer, ArrayList<Integer>> p;
+
 
 	static int[] temp_edgeExtreme = new int[2];
 
-	
-	
+
+
 	public void set(Map<Integer, Double[]> verticesCoordinates, Map<Integer, Integer[]> elementsVertices,
-			Map<Integer, Integer[]> borderEdgesVertices, boolean checkData) {
-		
+			Map<Integer, Integer[]> borderEdgesVertices, Map<Integer, Integer> borderEdgesLabel,  boolean checkData) {
+
 		this.verticesCoordinates = verticesCoordinates;
 		this.elementsVertices = elementsVertices;
 		this.borderEdgesVertices = borderEdgesVertices;
+		this.borderEdgesLabel = borderEdgesLabel;
 		this.checkData = checkData;
-		
+
 	}
-	
-	
-	
+
+
+
 	public void defineTopology() {
 
 		long startTime = System.nanoTime();
@@ -150,27 +159,26 @@ public class TopologyTriangularMesh {
 			}
 
 		}
+		//System.out.println("\n\nNumber of elements: " + elementsVertices.keySet().size());
+		//System.out.println("Number of edges: " + N_ins);
+		//		if(checkData == true) {
+		//			System.out.println("\n   Edges:");
+		//			for(int i=1; i<=N_ins; i++) {
+		//				System.out.println( "      edge " + i + " : " + tmp_Gamma_j[i][0] + "-" + tmp_Gamma_j[i][1] ); 
+		//			}
+		//			System.out.println("\n   Elements' edges:");
+		//			for(Integer element : elementsVertices.keySet()) {
+		//				System.out.println( "      element " + element + " : " + tmp_S[element][0] + "," + tmp_S[element][1] + "," + tmp_S[element][2] ); 
+		//			}
+		//			System.out.println("\n   Left and right element of each edge:");
+		//			for(int i=1; i<=N_ins; i++) {
+		//				System.out.println( "      edge " + i + " : left " + tmp_l[i] + " , right " + tmp_r[i]); 
+		//			}
+		//
+		//		}
 
-		System.out.println("\n\nNumber of elements: " + elementsVertices.keySet().size());
-		System.out.println("Number of edges: " + N_ins);
-//		if(checkData == true) {
-//			System.out.println("\n   Edges:");
-//			for(int i=1; i<=N_ins; i++) {
-//				System.out.println( "      edge " + i + " : " + tmp_Gamma_j[i][0] + "-" + tmp_Gamma_j[i][1] ); 
-//			}
-//			System.out.println("\n   Elements' edges:");
-//			for(Integer element : elementsVertices.keySet()) {
-//				System.out.println( "      element " + element + " : " + tmp_S[element][0] + "," + tmp_S[element][1] + "," + tmp_S[element][2] ); 
-//			}
-//			System.out.println("\n   Left and right element of each edge:");
-//			for(int i=1; i<=N_ins; i++) {
-//				System.out.println( "      edge " + i + " : left " + tmp_l[i] + " , right " + tmp_r[i]); 
-//			}
-//
-//		}
 
-		
-		
+
 		/*
 		 * tmp_Gamma_j has to be modified in order to define the correct orientation of each edge
 		 */
@@ -216,41 +224,48 @@ public class TopologyTriangularMesh {
 			}
 		}
 
-		System.out.println("\nMesh topology created. Elapsed time was " + (System.nanoTime()-startTime)/1000000 + " ms.\n\n\n\n\n" );
+		//System.out.println("\nMesh topology created. Elapsed time was " + (System.nanoTime()-startTime)/1000000 + " ms.\n\n\n\n\n" );
 
 
 
 
 		/*
 		 * Move topology in the definitive array/matrix
+		 * FIXME: clean commented lines
 		 */
 		startTime = System.nanoTime();
 		int N_j = N_ins;
 		startTime = System.nanoTime();
 		int[] l = new int[N_j+1];
 		int[] r = new int[N_j+1];
-		int[][] S_i = new int[N_j+1][3];
+		//int[][] S_i = new int[N_j+1][3];
 		int[][] Gamma_j = new int[N_j+1][2];
 		for(int i=1; i<=N_j; i++) {
 			l[i] = tmp_l[i];
 			r[i] = tmp_r[i];
-			S_i[i][0] = tmp_S[i][0];
-			S_i[i][1] = tmp_S[i][1];
-			S_i[i][2] = tmp_S[i][2];
+			//S_i[i][0] = tmp_S[i][0];
+			//S_i[i][1] = tmp_S[i][1];
+			//S_i[i][2] = tmp_S[i][2];
 			Gamma_j[i][0] = tmp_Gamma_j[i][0];
 			Gamma_j[i][1] = tmp_Gamma_j[i][1];
 		}
+		int[][] S_i = new int[elementsVertices.keySet().size()][3];
+		for(int i=1; i<elementsVertices.keySet().size(); i++) {
+			S_i[i][0] = tmp_S[i][0];
+			S_i[i][1] = tmp_S[i][1];
+			S_i[i][2] = tmp_S[i][2];
+		}
 		//System.out.println("\nMoved tmp in definitive array/matrix. Elapsed time was " + (System.nanoTime()-startTime)/1000000 + " ms" );
-		
-		
+
+
 		/*
 		 * FIXME: just to check the time required to traverse the 
 		 * topology stored in primitive variables (array/matrix)
 		 * Loop over definitive array/matrix
 		 */
-		System.out.println("Loop over array...");
-		startTime = System.nanoTime();
-		if(checkData == false) {
+		if(checkData == true) {
+			System.out.println("Loop over array...");
+			startTime = System.nanoTime();
 			System.out.println("\n\tEdges extremes:");
 			for(int i=1; i<=N_ins; i++) {
 				//System.out.println( "\t\tedge " + i + " : " + Gamma_j[i][0] + "-" + Gamma_j[i][1] ); 
@@ -266,10 +281,9 @@ public class TopologyTriangularMesh {
 			for(int i=1; i<=N_ins; i++) {
 				//System.out.println( "\t\tedge " + i + " : left " + l[i] + " , right " + r[i]); 
 			}
-
+			System.out.println("...elapsed time was " + (System.nanoTime()-startTime)/1000000 + " ms" );
+			//System.out.println("...elapsed time was " + (System.nanoTime()-startTime) + " ns" );
 		} 
-		System.out.println("...elapsed time was " + (System.nanoTime()-startTime)/1000000 + " ms" );
-		//System.out.println("...elapsed time was " + (System.nanoTime()-startTime) + " ns" );
 
 
 		/*
@@ -280,24 +294,53 @@ public class TopologyTriangularMesh {
 		rr = new HashMap<Integer, Integer>();
 		gamma_j = new HashMap<Integer, Integer[]>();
 		s_i = new HashMap<Integer, ArrayList<Integer>>();
-		//List<Integer> temp_S = new ArrayList<Integer>();
+		p = new HashMap<Integer, ArrayList<Integer>>(); 
+		int[] tmp_p = new int[3];
 		for(int i=1; i<=N_j; i++) {
 			ll.put(i,  tmp_l[i]);
 			rr.put(i, tmp_r[i]);
-			s_i.put( i, new ArrayList<Integer>(Arrays.asList(tmp_S[i][0],tmp_S[i][1],tmp_S[i][2])) );
+			//s_i.put( i, new ArrayList<Integer>(Arrays.asList(tmp_S[i][0],tmp_S[i][1],tmp_S[i][2])) );
 			gamma_j.put(i, new Integer[] {tmp_Gamma_j[i][0],tmp_Gamma_j[i][1]});
 		}
-		System.out.println("\n\nMoved tmp in definitive maps. Elapsed time was " + (System.nanoTime()-startTime)/1000000 + " ms" );
+		for(int i=1; i<=elementsVertices.keySet().size(); i++) {
+			s_i.put( i, new ArrayList<Integer>(Arrays.asList(tmp_S[i][0],tmp_S[i][1],tmp_S[i][2])) );
+			for(int j=0; j<tmp_S[0].length; j++) {
+				if(rr.get(tmp_S[i][j]) != i) {
+					tmp_p[j] = rr.get(tmp_S[i][j]);
+				} else {
+					tmp_p[j] = ll.get(tmp_S[i][j]);
+				}
+			}
+			p.put( i, new ArrayList<Integer>(Arrays.asList(tmp_p[0],tmp_p[1],tmp_p[2]) ) );
+		}
+		//System.out.println("\n\nMoved tmp in definitive maps. Elapsed time was " + (System.nanoTime()-startTime)/1000000 + " ms" );
 		//System.out.println("\n\nMoved tmp in definitive maps. Elapsed time was " + (System.nanoTime()-startTime) + " ns" );
-
+		int[] a = new int[2];
+		int[] b = new int[2];
+		
+		boundaryLabel = new HashMap<Integer, Integer>();
+		for(Integer edge : borderEdgesLabel.keySet()) {
+			a = sort2(borderEdgesVertices.get(edge)[0], borderEdgesVertices.get(edge)[1]).clone();
+			for(Integer edge1 : gamma_j.keySet()) {
+				b = sort2(gamma_j.get(edge1)[0],gamma_j.get(edge1)[1]).clone();
+				if( isEqual( a,b  ) ) {
+					boundaryLabel.put(edge1, borderEdgesLabel.get(edge));
+					break;
+				}
+			}
+		}	
+		
+		if(checkData == true) {
+		
+		}
 
 
 		/*
 		 * Loop over maps to print the topology
 		 */
-		System.out.println("\nTopology summary:");
-		startTime = System.nanoTime();
-		if(checkData == false) {
+		if(checkData == true) {
+			System.out.println("\nTopology summary:");
+			startTime = System.nanoTime();
 			System.out.println("\n\tEdges extremes:");
 			for(Integer edge : gamma_j.keySet()) {
 				System.out.println( "\t\tedge " + edge + " : " + gamma_j.get(edge)[0] + "-" + gamma_j.get(edge)[1] ); 
@@ -314,6 +357,18 @@ public class TopologyTriangularMesh {
 			for(Integer edge : gamma_j.keySet()) {
 				System.out.println( "\t\tedge " + edge + " : left " + ll.get(edge) + " , right " + rr.get(edge)); 
 			}
+			System.out.println("\n\tBoundary labels:");
+			for(Integer edge : boundaryLabel.keySet()) {
+				System.out.println( "\t\tedge " + edge + "  " + boundaryLabel.get(edge) ); 
+			}
+			System.out.println("\n\tElement neighbours:");
+			for(Integer element : p.keySet()) {
+				System.out.print( "\t\telement " + element + " : " ); 
+				for(Integer edge : p.get(element)) {
+					System.out.print( edge + " "); 
+				}
+				System.out.println("\n");
+			}
 			System.out.println("...elapsed time was " + (System.nanoTime()-startTime)/1000000 + " ms" );
 			//System.out.println("...elapsed time was " + (System.nanoTime()-startTime) + " ns" );
 
@@ -325,26 +380,29 @@ public class TopologyTriangularMesh {
 	public Map<Integer, Integer> getL(){
 		return ll;
 	}
-	
-	
-	
+
+
+
 	public Map<Integer, Integer> getR(){
 		return rr;
 	}
 
-	
-	
+
+
 	public Map<Integer, Integer[]> getGammaj(){
 		return gamma_j;
 	}
 
-	
-	
+
+
 	public Map<Integer, ArrayList<Integer>> getSi(){
 		return s_i;
 	}
 
 
+	public Map<Integer, Integer> getBoundaryLabel(){
+		return boundaryLabel;
+	}
 
 	//////////////////
 	//////////////////
@@ -366,8 +424,8 @@ public class TopologyTriangularMesh {
 		return temp_edgeExtreme;
 	}
 
-	
-	
+
+
 	private boolean isEqual(int[] edgeExtreme0, int[] edgeExtreme1) {
 		boolean isEqual = true;
 		for(int i=0; i<2; i++) {
@@ -380,7 +438,7 @@ public class TopologyTriangularMesh {
 	}
 
 
-	
+
 	private int elementInVector( int[] edgeExtreme, int[][] temp_Gamma_j, int N_ins, int N_edges) {
 		int tmp_elementInVector;
 		if(N_ins==0) {

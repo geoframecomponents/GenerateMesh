@@ -48,7 +48,13 @@ public class GenerateTriangularMesh {
 	public Map<Integer, Integer[]> borderEdgesVertices;
 
 	@In
+	public Map<Integer, Integer> borderEdgesLabel;
+	
+	@In
 	public boolean checkData = false;
+	
+	@In 
+	public String geometryType;
 
 	@Out
 	public Map<Integer, Integer> l;
@@ -76,6 +82,9 @@ public class GenerateTriangularMesh {
 	
 	@Out
 	public Map<Integer, Double[]> edgeNormalVector;
+	
+	@Out
+	public Map<Integer, Integer> boundaryLabels;
 
 
 
@@ -89,17 +98,21 @@ public class GenerateTriangularMesh {
 		edgesLength = new HashMap<Integer, Double>();
 		delta_j = new HashMap<Integer, Double>();
 		edgeNormalVector = new HashMap<Integer, Double[]>();
+		boundaryLabels = new HashMap<Integer, Integer>();
 
 
 		TopologyTriangularMesh topology = new TopologyTriangularMesh();
-		Geometry geometry = new EuclideanCartesianGeometry();
+		GeometrySimpleFactory geometryFactory = new GeometrySimpleFactory();
+		Geometry geometry = geometryFactory.createGeometry(geometryType);
 
-		topology.set(verticesCoordinates, elementsVertices, borderEdgesVertices, checkData);
+		topology.set(verticesCoordinates, elementsVertices, borderEdgesVertices, borderEdgesLabel, checkData);
 		topology.defineTopology();
 		l = topology.getL();
 		r = topology.getR();
 		gamma_j = topology.getGammaj();
-		s_i = topology.getSi();
+		//s_i = topology.getSi();
+		s_i = new HashMap<Integer, ArrayList<Integer>>(topology.getSi());
+		boundaryLabels = topology.getBoundaryLabel();
 		
 		
 		/*
@@ -110,7 +123,7 @@ public class GenerateTriangularMesh {
 		 */
 		elementsCentroidsCoordinates = geometry.computeCentroid(elementsVertices, verticesCoordinates);
 		
-		if(checkData == false) {
+		if(checkData == true) {
 			System.out.println("\n\tElements' centroid:");
 			for(Integer element : elementsCentroidsCoordinates.keySet()) {
 				System.out.println( "\t\t" + element + " : "+ elementsCentroidsCoordinates.get(element)[0] 
@@ -125,7 +138,7 @@ public class GenerateTriangularMesh {
 		 *  lambda_j
 		 */
 		edgesLength = geometry.computeEdgeLength(gamma_j, verticesCoordinates);
-		if(checkData == false) {
+		if(checkData == true) {
 			System.out.println("\n\tEdges' length:");
 			for(Integer edge : edgesLength.keySet()) {
 				System.out.println( "\t\t" + edge + " : "+ edgesLength.get(edge) ); 
@@ -139,7 +152,7 @@ public class GenerateTriangularMesh {
 		 */
 		elementsArea = geometry.computeArea(elementsVertices, verticesCoordinates);
 
-		if(checkData == false) {
+		if(checkData == true) {
 			System.out.println("\n\tElements' area:");
 			for(Integer element : elementsArea.keySet()) {
 				System.out.println( "\t\t" + element + " : "+ elementsArea.get(element) ); 
@@ -151,82 +164,29 @@ public class GenerateTriangularMesh {
 		 * GEOMETRY: Compute the normal directions for each internal edge
 		 */
 		edgeNormalVector = geometry.computeNormalVector(verticesCoordinates, gamma_j, l, r);
-		if(checkData == false) {
+		if(checkData == true) {
 			System.out.println("\n\tComponents (x,y) of the normal vector of each edge:");
 			for(Integer edge : edgeNormalVector.keySet()) {
 				System.out.println( "\t\t" + edge + " : " + edgeNormalVector.get(edge)[0] + "," + edgeNormalVector.get(edge)[1] ); 
 			}
 		}
 
-//		double LL;
-//		double[][] n_v = new double[N_ins+1][2];
-//		double[][] n_vi = new double[N_ins+1][2];
-//		double sign;
-//		
-//		for(int i=1; i<=N_ins; i++) {
-//			if(tmp_l[i] !=0 & tmp_r[i] != 0) {
-////				LL = Math.sqrt( Math.pow( elementsCentroidsCoordinates.get(tmp_r[i])[0] - elementsCentroidsCoordinates.get(tmp_l[i])[0], 2 ) +
-////						 Math.pow( elementsCentroidsCoordinates.get(tmp_r[i])[1] - elementsCentroidsCoordinates.get(tmp_l[i])[1], 2 ) );
-////				n_vi[i][0] = ( elementsCentroidsCoordinates.get(tmp_r[i])[0] - elementsCentroidsCoordinates.get(tmp_l[i])[0] )/LL;
-////				n_vi[i][1] = ( elementsCentroidsCoordinates.get(tmp_r[i])[1] - elementsCentroidsCoordinates.get(tmp_l[i])[1] )/LL;
-//				// ?? line 107 tmp_Gamma_j[i] = elementsVertices.get(key)
-//				// ?? line 108
-//				LL = Math.sqrt( Math.pow( verticesCoordinates.get(tmp_Gamma_j[i][0])[0] - verticesCoordinates.get(tmp_Gamma_j[i][1])[0], 2 ) +
-//						 Math.pow( verticesCoordinates.get(tmp_Gamma_j[i][0])[1] - verticesCoordinates.get(tmp_Gamma_j[i][1])[1], 2 ) );
-//				n_v[i][0] = -( verticesCoordinates.get(tmp_Gamma_j[i][0])[1] - verticesCoordinates.get(tmp_Gamma_j[i][1])[1]  )/LL;
-//				n_v[i][1] = ( verticesCoordinates.get(tmp_Gamma_j[i][0])[0] - verticesCoordinates.get(tmp_Gamma_j[i][1])[0] )/LL;
-////				sign = n_v[i][0]*n_vi[i][0] + n_v[i][1]*n_v[i][1];
-////				if(sign>0) {
-////					n_v[i][0] = n_v[i][0];
-////					n_v[i][1] = n_v[i][1];
-////				} else {
-////					n_v[i][0] = -n_v[i][0];
-////					n_v[i][1] = -n_v[i][1];
-////				}
-//			} else {
-//				LL = Math.sqrt( Math.pow( verticesCoordinates.get(tmp_Gamma_j[i][0])[0] - verticesCoordinates.get(tmp_Gamma_j[i][1])[0], 2 ) +
-//						 Math.pow( verticesCoordinates.get(tmp_Gamma_j[i][0])[1] - verticesCoordinates.get(tmp_Gamma_j[i][1])[1], 2 ) );
-//				n_v[i][0] = -(  verticesCoordinates.get(tmp_Gamma_j[i][0])[1] - verticesCoordinates.get(tmp_Gamma_j[i][1])[1] )/LL;
-//				n_v[i][1] = ( verticesCoordinates.get(tmp_Gamma_j[i][0])[0] - verticesCoordinates.get(tmp_Gamma_j[i][1])[0] )/LL;
-//			}
-//		}
-//		
-//		/*
-//		 * GEOMETRY: compute the distance normal to the edge between the centers of two adjacent polygons
-//		 * 	
-//		 * delta_j
-//		 */
+		
+		/*
+		 * GEOMETRY: compute the distance normal to the edge between the centers of two adjacent polygons
+		 * 	
+		 * delta_j
+		 */
 		delta_j = geometry.computeCentroidsNormalDistance(elementsCentroidsCoordinates, l, r, edgeNormalVector, verticesCoordinates, gamma_j, edgesLength);
-		if(checkData == false) {
+		if(checkData == true) {
 			System.out.println("\n\tDistance between the centroids of two adjacent polygon:");
 			for(Integer edge : delta_j.keySet()) {
 				System.out.println( "\t\t" + edge + " : " + delta_j.get(edge) ); 
 			}
 		}
-//		double[] tmp_length = new double[2];
-//		double[][] delta_j = new double[N_ins+1][1];
-//		double tmp_area;
-//		for(int i=1; i<=N_ins; i++) {
-//			if(tmp_l[i] !=0 & tmp_r[i] != 0) {
-//				tmp_length[0] =  elementsCentroidsCoordinates.get(tmp_l[i])[0] - elementsCentroidsCoordinates.get(tmp_r[i])[0];
-//				tmp_length[1] =  elementsCentroidsCoordinates.get(tmp_l[i])[1] - elementsCentroidsCoordinates.get(tmp_r[i])[1];
-//				delta_j[i][0] = Math.abs( tmp_length[0]*n_v[i][0] + tmp_length[1]*n_v[i][1] );
-//			} else {
-//				tmp_area = triangleArea( verticesCoordinates.get(tmp_Gamma_j[i][0]), verticesCoordinates.get(tmp_Gamma_j[i][1]),
-//						elementsCentroidsCoordinates.get(tmp_l[i]) );
-//				LL = Math.sqrt( Math.pow( verticesCoordinates.get(tmp_Gamma_j[i][0])[0] - verticesCoordinates.get(tmp_Gamma_j[i][1])[0], 2 ) +
-//						 Math.pow( verticesCoordinates.get(tmp_Gamma_j[i][0])[1] - verticesCoordinates.get(tmp_Gamma_j[i][1])[1], 2 ) );
-//				delta_j[i][0] = 2*tmp_area/LL;
-//			}
-//		}
-//		
-//
-//		
 
-//
 
-//
-//
+		System.out.println("Computed topology and geometry");
 
 
 	}//close @Execute

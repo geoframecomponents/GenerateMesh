@@ -30,14 +30,14 @@ public class TestGenerateMesh {
 	public void Test() throws Exception {
 
 		//String fileName = "resources/input/square_with_subdomain_100.msh";
-		String fileName = "resources/input/square22.msh";
+		String fileName = "resources/input/slope.msh";
 
 		String splitter = " ";
 
 		Readmsh reader = new Readmsh();
 		reader.fileName = fileName;
 		reader.splitter = splitter;
-		reader.checkData = false;
+		reader.checkData = true;
 		reader.process();
 		
 		//GenerateMeshTriangles generateMesh = new GenerateMeshTriangles();
@@ -45,7 +45,9 @@ public class TestGenerateMesh {
 		generateMesh.verticesCoordinates = reader.verticesCoordinates;
 		generateMesh.elementsVertices = reader.elementsVertices;
 		generateMesh.borderEdgesVertices = reader.borderEdgesVertices;
+		generateMesh.borderEdgesLabel = reader.borderEdgesLabel;
 		generateMesh.checkData = true;
+		generateMesh.geometryType = "EuclideanCartesian";
 		generateMesh.process();
 		
 		
