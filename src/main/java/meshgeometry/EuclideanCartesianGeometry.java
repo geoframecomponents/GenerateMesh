@@ -36,6 +36,7 @@ public class EuclideanCartesianGeometry implements Geometry {
 	private double tmpLength;
 	private Double[] tmpNormalVector = new Double[2];
 	private Map<Integer, Double[]> elementsCentroidsCoordinates;
+	private Map<Integer, Double[]> edgesCentroidsCoordinates;
 	private Map<Integer, Double> elementsArea;
 	private Map<Integer, Double> edgeLength;
 	private Map<Integer, Double[]> edgeNormalVector;
@@ -91,6 +92,23 @@ public class EuclideanCartesianGeometry implements Geometry {
 
 	}
 	
+	
+	
+	@Override
+	public Map<Integer, Double[]> computeEdgeCentroid(Map<Integer, Integer[]> edgesVertices,
+			Map<Integer, Double[]> verticesCoordinates) {
+		
+		edgesCentroidsCoordinates = new HashMap<Integer, Double[]>();
+		for(Integer edge : edgesVertices.keySet()) {
+			tmpXC = ( verticesCoordinates.get(edgesVertices.get(edge)[0])[0] + verticesCoordinates.get(edgesVertices.get(edge)[1])[0] )/2.0;
+			tmpYC = ( verticesCoordinates.get(edgesVertices.get(edge)[0])[1] + verticesCoordinates.get(edgesVertices.get(edge)[1])[1] )/2.0;
+
+			edgesCentroidsCoordinates.put(edge, new Double[] {tmpXC,tmpYC});
+		}
+		
+		return edgesCentroidsCoordinates;
+
+	}
 	
 	
 	/*

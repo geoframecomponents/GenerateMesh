@@ -26,6 +26,8 @@ public interface Geometry {
 	public Map<Integer, Double[]> computeCentroid(Map<Integer, Integer[]> elementsVertices, Map<Integer, Double[]> verticesCoordinates);
 		
 	public Map<Integer, Double> computeEdgeLength(Map<Integer, Integer[]> elementsVertices, Map<Integer, Double[]> verticesCoordinates);
+	
+	public Map<Integer, Double[]> computeEdgeCentroid(Map<Integer, Integer[]> elementsVertices, Map<Integer, Double[]> verticesCoordinates);
 
 	public Map<Integer, Double> computeArea(Map<Integer, Integer[]> elementsVertices, Map<Integer, Double[]> verticesCoordinates);
 	
