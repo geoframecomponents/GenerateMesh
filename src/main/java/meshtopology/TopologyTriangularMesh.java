@@ -59,7 +59,9 @@ public class TopologyTriangularMesh {
 	public Map<Integer, Integer> rr;
 
 	//@Out
-	public Map<Integer, Integer> boundaryLabel;
+	public Map<Integer, Integer> edgeBoundaryBCType;
+	
+	public Map<Integer, Integer> edgeBoundaryBCValue;
 
 	//@Out
 	public Map<Integer, Integer[]> gamma_j;
@@ -318,13 +320,19 @@ public class TopologyTriangularMesh {
 		int[] a = new int[2];
 		int[] b = new int[2];
 		
-		boundaryLabel = new HashMap<Integer, Integer>();
+		edgeBoundaryBCType = new HashMap<Integer, Integer>();
+		edgeBoundaryBCValue = new HashMap<Integer, Integer>();
 		for(Integer edge : borderEdgesLabel.keySet()) {
 			a = sort2(borderEdgesVertices.get(edge)[0], borderEdgesVertices.get(edge)[1]).clone();
 			for(Integer edge1 : gamma_j.keySet()) {
 				b = sort2(gamma_j.get(edge1)[0],gamma_j.get(edge1)[1]).clone();
 				if( isEqual( a,b  ) ) {
-					boundaryLabel.put(edge1, borderEdgesLabel.get(edge));
+					/*
+					 * Tens of borderEdgesLabel are used to define the type of the boundary condition (edgeBoundaryBCType),
+					 * the borderEdgesLabel are used to identify the value of the boundary condition (edgeBoundaryValue).
+					 */
+					edgeBoundaryBCType.put(edge1, borderEdgesLabel.get(edge)/10);
+					edgeBoundaryBCValue.put(edge1, borderEdgesLabel.get(edge));
 					break;
 				}
 			}
@@ -358,8 +366,8 @@ public class TopologyTriangularMesh {
 				System.out.println( "\t\tedge " + edge + " : left " + ll.get(edge) + " , right " + rr.get(edge)); 
 			}
 			System.out.println("\n\tBoundary labels:");
-			for(Integer edge : boundaryLabel.keySet()) {
-				System.out.println( "\t\tedge " + edge + "  " + boundaryLabel.get(edge) ); 
+			for(Integer edge : edgeBoundaryBCType.keySet()) {
+				System.out.println( "\t\tedge " + edge + " BC type " + edgeBoundaryBCType.get(edge) + " BC value ID " + edgeBoundaryBCValue.get(edge) ); 
 			}
 			System.out.println("\n\tElement neighbours:");
 			for(Integer element : p.keySet()) {
@@ -400,8 +408,12 @@ public class TopologyTriangularMesh {
 	}
 
 
-	public Map<Integer, Integer> getBoundaryLabel(){
-		return boundaryLabel;
+	public Map<Integer, Integer> getEdgeBoundaryBCType(){
+		return edgeBoundaryBCType;
+	}
+	
+	public Map<Integer, Integer> getEdgeBoundaryBCValue(){
+		return edgeBoundaryBCValue;
 	}
 
 	//////////////////

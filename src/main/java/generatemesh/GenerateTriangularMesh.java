@@ -72,6 +72,9 @@ public class GenerateTriangularMesh {
 	public Map<Integer, Double[]> elementsCentroidsCoordinates;
 	
 	@Out
+	public Map<Integer, Double[]> edgesCentroidsCoordinates;
+	
+	@Out
 	public Map<Integer, Double> elementsArea;
 	
 	@Out
@@ -84,7 +87,10 @@ public class GenerateTriangularMesh {
 	public Map<Integer, Double[]> edgeNormalVector;
 	
 	@Out
-	public Map<Integer, Integer> boundaryLabels;
+	public Map<Integer, Integer> edgeBoundaryBCType;
+	
+	@Out
+	public Map<Integer, Integer> edgeBoundaryBCValue;
 
 
 
@@ -96,9 +102,11 @@ public class GenerateTriangularMesh {
 		elementsCentroidsCoordinates = new HashMap<Integer, Double[]>();
 		elementsArea = new HashMap<Integer, Double>();
 		edgesLength = new HashMap<Integer, Double>();
+		edgesCentroidsCoordinates = new HashMap<Integer, Double[]>();
 		delta_j = new HashMap<Integer, Double>();
 		edgeNormalVector = new HashMap<Integer, Double[]>();
-		boundaryLabels = new HashMap<Integer, Integer>();
+		edgeBoundaryBCType = new HashMap<Integer, Integer>();
+		edgeBoundaryBCValue = new HashMap<Integer, Integer>();
 
 
 		TopologyTriangularMesh topology = new TopologyTriangularMesh();
@@ -112,7 +120,8 @@ public class GenerateTriangularMesh {
 		gamma_j = topology.getGammaj();
 		//s_i = topology.getSi();
 		s_i = new HashMap<Integer, ArrayList<Integer>>(topology.getSi());
-		boundaryLabels = topology.getBoundaryLabel();
+		edgeBoundaryBCType = topology.getEdgeBoundaryBCType();
+		edgeBoundaryBCValue = topology.getEdgeBoundaryBCValue();
 		
 		
 		/*
@@ -145,7 +154,22 @@ public class GenerateTriangularMesh {
 			}
 		}
 		
+		
+		/*
+		 * GEOMETRY: compute the coordinates of the centroid of each edge
+		 *  lambda_j
+		 */
+		edgesCentroidsCoordinates = geometry.computeEdgeCentroid(gamma_j, verticesCoordinates);
+		
+		if(checkData == true) {
+			System.out.println("\n\tEdges' centroid:");
+			for(Integer edge : edgesCentroidsCoordinates.keySet()) {
+				System.out.println( "\t\t" + edge + " : "+ edgesCentroidsCoordinates.get(edge)[0] 
+						+ "," +edgesCentroidsCoordinates.get(edge)[1] );
+			}
+		}
 
+		
 		/*
 		 * GEOMETRY: compute the area of each element
 		 * O'Rourke, J., Computational Geometry in C, page 26
