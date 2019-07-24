@@ -118,8 +118,12 @@ public class Readmsh {
 							Integer.valueOf(lineContent[2]) } ); 
 					elementsLabel.put(iLine-nVertices, Integer.valueOf(lineContent[3])); 
 				} else {
-					borderEdgesVertices.put(iLine-(nVertices+nElements), new Integer[] { Integer.valueOf(lineContent[0]),Integer.valueOf(lineContent[1]) } );
-					borderEdgesLabel.put(iLine-(nVertices+nElements), Integer.valueOf(lineContent[2])); 
+					if (Integer.valueOf(lineContent[2]) == -1) {
+
+					} else { 
+						borderEdgesVertices.put(iLine-(nVertices+nElements), new Integer[] { Integer.valueOf(lineContent[0]),Integer.valueOf(lineContent[1]) } );
+						borderEdgesLabel.put(iLine-(nVertices+nElements), Integer.valueOf(lineContent[2])); 
+					}
 				}
 
 				iLine ++;
