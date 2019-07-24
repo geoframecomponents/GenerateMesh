@@ -42,7 +42,7 @@ public class TopologyTriangularMesh {
 
 	//@In
 	public Map<Integer, Integer[]> elementsVertices;
-
+	
 	//@In
 	public Map<Integer, Integer[]> borderEdgesVertices;
 

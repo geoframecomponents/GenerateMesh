@@ -27,14 +27,14 @@ public class TestReadmsh {
 	public void Test() throws Exception {
 
 		//String fileName = "resources/input/square22.msh";
-		String fileName = "resources/input/square_with_subdomain_100.msh";
+		String fileName = "resources/input/layer.msh";
 
 		String splitter = " ";
 
 		Readmsh reader = new Readmsh();
 		reader.fileName = fileName;
 		reader.splitter = splitter;
-		reader.checkData = false;
+		reader.checkData = true;
 		reader.process();
 		
 	}
