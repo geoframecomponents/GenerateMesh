@@ -52,7 +52,7 @@ public class Readmsh {
 
 	@In
 	public boolean printFile = false;
-	
+
 	@In 
 	public boolean checkData = false;
 
@@ -60,23 +60,24 @@ public class Readmsh {
 	@Out
 	public Map<Integer, Double[]> verticesCoordinates = new HashMap<Integer, Double[]>();
 	//public Map<Integer,Double> yCoordinates = new HashMap<Integer,Double>();
-	
+
 	@Out
 	public Map<Integer, Integer[]> elementsVertices = new HashMap<Integer, Integer[]>();
-	
+
 	@Out
 	public Map<Integer, Integer> elementsLabel = new HashMap<Integer, Integer>();
-	
+
 	@Out
 	public Map<Integer, Integer[]> borderEdgesVertices = new HashMap<Integer, Integer[]>();
-	
+
 	@Out
 	public Map<Integer, Integer> borderEdgesLabel = new HashMap<Integer, Integer>();
 
 	public int nVertices =-999;
 	public int nElements = -999;
 	public int nBorderEdges = -999;
-	
+
+	int step = 0;
 	/**
 	 * @param args
 	 * @throws IOException 
@@ -84,81 +85,85 @@ public class Readmsh {
 	@Execute
 	public void process() throws IOException {
 
-		File file = new File(fileName);
-		FileInputStream fis = new FileInputStream(file);
-		InputStreamReader isr = new InputStreamReader(fis);
-		BufferedReader br = new BufferedReader(isr);
+		if (step == 0) {
+			File file = new File(fileName);
+			FileInputStream fis = new FileInputStream(file);
+			InputStreamReader isr = new InputStreamReader(fis);
+			BufferedReader br = new BufferedReader(isr);
 
-		String line;
-		System.out.println("Opened the file: " + fileName + "\n\n");
-		long startTime = System.nanoTime();
-		if(printFile == true) {
+			String line;
+			System.out.println("Opened the file: " + fileName + "\n\n");
+			long startTime = System.nanoTime();
+			if(printFile == true) {
+				while((line = br.readLine()) != null){
+					//process the line
+					System.out.println(line);
+				}
+			}
+			int iLine = 0;
 			while((line = br.readLine()) != null){
 				//process the line
-				System.out.println(line);
+				String[] lineContent = line.split(splitter);
+
+				if(iLine==0) {
+					//.out.println("Line: " + iLine +"  " + lineContent[0] + " " +lineContent[1] + " " +lineContent[2] + "\n\n");
+					nVertices = Integer.valueOf(lineContent[0]);
+					nElements = Integer.valueOf(lineContent[1]);
+					nBorderEdges = Integer.valueOf(lineContent[2]);
+				} else if(iLine>0 && iLine<=nVertices) {
+					verticesCoordinates.put( iLine, new Double[] { Double.valueOf(lineContent[0]),Double.valueOf(lineContent[1]) } ); 
+					//yCoordinates.put(iLine,Double.valueOf(lineContent[1])); 
+				} else if(iLine>nVertices && iLine<=nVertices+nElements) {
+					elementsVertices.put(iLine-nVertices, new Integer[] { Integer.valueOf(lineContent[0]),Integer.valueOf(lineContent[1]), 
+							Integer.valueOf(lineContent[2]) } ); 
+					elementsLabel.put(iLine-nVertices, Integer.valueOf(lineContent[3])); 
+				} else {
+					borderEdgesVertices.put(iLine-(nVertices+nElements), new Integer[] { Integer.valueOf(lineContent[0]),Integer.valueOf(lineContent[1]) } );
+					borderEdgesLabel.put(iLine-(nVertices+nElements), Integer.valueOf(lineContent[2])); 
+				}
+
+				iLine ++;
+
 			}
+
+			br.close();
+			long endTime = System.nanoTime();
+			System.out.println("Reading file completed. Elapsed time was " + (endTime-startTime)/1000000000 + " seconds" );
+
+			System.out.println("\n\t nVertices : " +nVertices);
+			System.out.println("\t nElements : " +nElements);
+			System.out.println("\t nBorderEdges : " +nBorderEdges);
+
+			/*
+			 * Check informations are correctly stored
+			 */
+			if(checkData == true) {
+
+				System.out.println("\n   Vertices set :");
+				for(Integer vertex : verticesCoordinates.keySet()) {
+					System.out.println("      " + vertex + " : "+ verticesCoordinates.get(vertex)[0] + "," +verticesCoordinates.get(vertex)[1]);
+				}
+
+				System.out.println("\n   Elements' vertices :");
+				for(Integer element : elementsVertices.keySet()) {
+					System.out.println("      " + element + " : "+ elementsVertices.get(element)[0] + "," +elementsVertices.get(element)[1]
+							+ "," +elementsVertices.get(element)[2] + " ; " + elementsLabel.get(element));
+				}
+
+				System.out.println("\n   Border edges :");
+				for(Integer edge : borderEdgesVertices.keySet()) {
+					System.out.println("      " + edge + " : "+ borderEdgesVertices.get(edge)[0] + "," +borderEdgesVertices.get(edge)[1]
+							+ " ; " + borderEdgesLabel.get(edge));
+				}
+
+
+			}
+
+			System.out.println("\nExit Readmsh.java\n\n\n");
+
 		}
-		int iLine = 0;
-		while((line = br.readLine()) != null){
-			//process the line
-			String[] lineContent = line.split(splitter);
 
-			if(iLine==0) {
-				//.out.println("Line: " + iLine +"  " + lineContent[0] + " " +lineContent[1] + " " +lineContent[2] + "\n\n");
-				nVertices = Integer.valueOf(lineContent[0]);
-				nElements = Integer.valueOf(lineContent[1]);
-				nBorderEdges = Integer.valueOf(lineContent[2]);
-			} else if(iLine>0 && iLine<=nVertices) {
-				verticesCoordinates.put( iLine, new Double[] { Double.valueOf(lineContent[0]),Double.valueOf(lineContent[1]) } ); 
-				//yCoordinates.put(iLine,Double.valueOf(lineContent[1])); 
-			} else if(iLine>nVertices && iLine<=nVertices+nElements) {
-				elementsVertices.put(iLine-nVertices, new Integer[] { Integer.valueOf(lineContent[0]),Integer.valueOf(lineContent[1]), 
-						Integer.valueOf(lineContent[2]) } ); 
-				elementsLabel.put(iLine-nVertices, Integer.valueOf(lineContent[3])); 
-			} else {
-				borderEdgesVertices.put(iLine-(nVertices+nElements), new Integer[] { Integer.valueOf(lineContent[0]),Integer.valueOf(lineContent[1]) } );
-				borderEdgesLabel.put(iLine-(nVertices+nElements), Integer.valueOf(lineContent[2])); 
-			}
-
-			iLine ++;
-
-		}
-
-		br.close();
-		long endTime = System.nanoTime();
-		System.out.println("Reading file completed. Elapsed time was " + (endTime-startTime)/1000000000 + " seconds" );
-
-		System.out.println("\n\t nVertices : " +nVertices);
-		System.out.println("\t nElements : " +nElements);
-		System.out.println("\t nBorderEdges : " +nBorderEdges);
-		
-		/*
-		 * Check informations are correctly stored
-		 */
-		if(checkData == true) {
-			
-			System.out.println("\n   Vertices set :");
-			for(Integer vertex : verticesCoordinates.keySet()) {
-				System.out.println("      " + vertex + " : "+ verticesCoordinates.get(vertex)[0] + "," +verticesCoordinates.get(vertex)[1]);
-			}
-
-			System.out.println("\n   Elements' vertices :");
-			for(Integer element : elementsVertices.keySet()) {
-				System.out.println("      " + element + " : "+ elementsVertices.get(element)[0] + "," +elementsVertices.get(element)[1]
-						+ "," +elementsVertices.get(element)[2] + " ; " + elementsLabel.get(element));
-			}
-
-			System.out.println("\n   Border edges :");
-			for(Integer edge : borderEdgesVertices.keySet()) {
-				System.out.println("      " + edge + " : "+ borderEdgesVertices.get(edge)[0] + "," +borderEdgesVertices.get(edge)[1]
-						+ " ; " + borderEdgesLabel.get(edge));
-			}
-			
-			
-		}
-		
-		System.out.println("\nExit Readmsh.java\n\n\n");
-
+		step++;
 	}// close @Execute
 
 }
