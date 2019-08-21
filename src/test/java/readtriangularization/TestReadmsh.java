@@ -27,9 +27,9 @@ public class TestReadmsh {
 	public void Test() throws Exception {
 
 		//String fileName = "resources/input/square22.msh";
-		String fileName = "resources/input/layer.msh";
+		String fileName = "resources/input/CartesianGrid.csv";
 
-		String splitter = " ";
+		String splitter = ",";
 
 		Readmsh reader = new Readmsh();
 		reader.fileName = fileName;

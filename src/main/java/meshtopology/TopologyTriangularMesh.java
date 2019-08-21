@@ -35,58 +35,58 @@ import oms3.annotations.*;
  * @author Niccolo` Tubini
  *
  */
-public class TopologyTriangularMesh {
+public class TopologyTriangularMesh extends Topology {
 
-	//@In
-	public Map<Integer, Double[]> verticesCoordinates;
+//	//@In
+//	public Map<Integer, Double[]> verticesCoordinates;
+//
+//	//@In
+//	public Map<Integer, Integer[]> elementsVertices;
+//	
+//	//@In
+//	public Map<Integer, Integer[]> borderEdgesVertices;
+//
+//	//@In
+//	public Map<Integer, Integer> borderEdgesLabel;
+//	
+//	//@In
+//	public boolean checkData;
+//
+//	//@Out
+//	public Map<Integer, Integer> ll;
+//
+//	//@Out
+//	public Map<Integer, Integer> rr;
+//
+//	//@Out
+//	public Map<Integer, Integer> edgeBoundaryBCType;
+//	
+//	public Map<Integer, Integer> edgeBoundaryBCValue;
+//
+//	//@Out
+//	public Map<Integer, Integer[]> gamma_j;
+//
+//	//@Out
+//	public Map<Integer, ArrayList<Integer>> s_i;
+//
+//	//@Out
+//	public Map<Integer, ArrayList<Integer>> p;
+//
+//
+//	static int[] temp_edgeExtreme = new int[2];
 
-	//@In
-	public Map<Integer, Integer[]> elementsVertices;
-	
-	//@In
-	public Map<Integer, Integer[]> borderEdgesVertices;
-
-	//@In
-	public Map<Integer, Integer> borderEdgesLabel;
-	
-	//@In
-	public boolean checkData;
-
-	//@Out
-	public Map<Integer, Integer> ll;
-
-	//@Out
-	public Map<Integer, Integer> rr;
-
-	//@Out
-	public Map<Integer, Integer> edgeBoundaryBCType;
-	
-	public Map<Integer, Integer> edgeBoundaryBCValue;
-
-	//@Out
-	public Map<Integer, Integer[]> gamma_j;
-
-	//@Out
-	public Map<Integer, ArrayList<Integer>> s_i;
-
-	//@Out
-	public Map<Integer, ArrayList<Integer>> p;
 
 
-	static int[] temp_edgeExtreme = new int[2];
-
-
-
-	public void set(Map<Integer, Double[]> verticesCoordinates, Map<Integer, Integer[]> elementsVertices,
-			Map<Integer, Integer[]> borderEdgesVertices, Map<Integer, Integer> borderEdgesLabel,  boolean checkData) {
-
-		this.verticesCoordinates = verticesCoordinates;
-		this.elementsVertices = elementsVertices;
-		this.borderEdgesVertices = borderEdgesVertices;
-		this.borderEdgesLabel = borderEdgesLabel;
-		this.checkData = checkData;
-
-	}
+//	public void set(Map<Integer, Double[]> verticesCoordinates, Map<Integer, Integer[]> elementsVertices,
+//			Map<Integer, Integer[]> borderEdgesVertices, Map<Integer, Integer> borderEdgesLabel,  boolean checkData) {
+//
+//		this.verticesCoordinates = verticesCoordinates;
+//		this.elementsVertices = elementsVertices;
+//		this.borderEdgesVertices = borderEdgesVertices;
+//		this.borderEdgesLabel = borderEdgesLabel;
+//		this.checkData = checkData;
+//
+//	}
 
 
 
@@ -385,36 +385,36 @@ public class TopologyTriangularMesh {
 	}//close defineTopology
 
 
-	public Map<Integer, Integer> getL(){
-		return ll;
-	}
-
-
-
-	public Map<Integer, Integer> getR(){
-		return rr;
-	}
-
-
-
-	public Map<Integer, Integer[]> getGammaj(){
-		return gamma_j;
-	}
-
-
-
-	public Map<Integer, ArrayList<Integer>> getSi(){
-		return s_i;
-	}
-
-
-	public Map<Integer, Integer> getEdgeBoundaryBCType(){
-		return edgeBoundaryBCType;
-	}
-	
-	public Map<Integer, Integer> getEdgeBoundaryBCValue(){
-		return edgeBoundaryBCValue;
-	}
+//	public Map<Integer, Integer> getL(){
+//		return ll;
+//	}
+//
+//
+//
+//	public Map<Integer, Integer> getR(){
+//		return rr;
+//	}
+//
+//
+//
+//	public Map<Integer, Integer[]> getGammaj(){
+//		return gamma_j;
+//	}
+//
+//
+//
+//	public Map<Integer, ArrayList<Integer>> getSi(){
+//		return s_i;
+//	}
+//
+//
+//	public Map<Integer, Integer> getEdgeBoundaryBCType(){
+//		return edgeBoundaryBCType;
+//	}
+//	
+//	public Map<Integer, Integer> getEdgeBoundaryBCValue(){
+//		return edgeBoundaryBCValue;
+//	}
 
 	//////////////////
 	//////////////////
@@ -425,48 +425,48 @@ public class TopologyTriangularMesh {
 
 
 
-	private int[] sort2( int vertex0, int vertex1 ) {
-		if(vertex0>vertex1) {
-			temp_edgeExtreme[0] = vertex1;
-			temp_edgeExtreme[1] = vertex0;
-		} else {
-			temp_edgeExtreme[0] = vertex0;
-			temp_edgeExtreme[1] = vertex1;
-		}
-		return temp_edgeExtreme;
-	}
-
-
-
-	private boolean isEqual(int[] edgeExtreme0, int[] edgeExtreme1) {
-		boolean isEqual = true;
-		for(int i=0; i<2; i++) {
-			if(edgeExtreme0[i] != edgeExtreme1[i]) {
-				isEqual = false;
-				return isEqual;
-			}
-		}
-		return isEqual;
-	}
-
-
-
-	private int elementInVector( int[] edgeExtreme, int[][] temp_Gamma_j, int N_ins, int N_edges) {
-		int tmp_elementInVector;
-		if(N_ins==0) {
-			tmp_elementInVector = 0;
-			//return 0;
-		} else {
-			tmp_elementInVector = 0;
-			for(int i=0; i<=N_ins ; i++) {
-				if(isEqual(edgeExtreme, temp_Gamma_j[i]))
-					tmp_elementInVector = i;
-				//return i;
-			}
-		} 
-
-		return tmp_elementInVector;
-	}
+//	private int[] sort2( int vertex0, int vertex1 ) {
+//		if(vertex0>vertex1) {
+//			temp_edgeExtreme[0] = vertex1;
+//			temp_edgeExtreme[1] = vertex0;
+//		} else {
+//			temp_edgeExtreme[0] = vertex0;
+//			temp_edgeExtreme[1] = vertex1;
+//		}
+//		return temp_edgeExtreme;
+//	}
+//
+//
+//
+//	private boolean isEqual(int[] edgeExtreme0, int[] edgeExtreme1) {
+//		boolean isEqual = true;
+//		for(int i=0; i<2; i++) {
+//			if(edgeExtreme0[i] != edgeExtreme1[i]) {
+//				isEqual = false;
+//				return isEqual;
+//			}
+//		}
+//		return isEqual;
+//	}
+//
+//
+//
+//	private int elementInVector( int[] edgeExtreme, int[][] temp_Gamma_j, int N_ins, int N_edges) {
+//		int tmp_elementInVector;
+//		if(N_ins==0) {
+//			tmp_elementInVector = 0;
+//			//return 0;
+//		} else {
+//			tmp_elementInVector = 0;
+//			for(int i=0; i<=N_ins ; i++) {
+//				if(isEqual(edgeExtreme, temp_Gamma_j[i]))
+//					tmp_elementInVector = i;
+//				//return i;
+//			}
+//		} 
+//
+//		return tmp_elementInVector;
+//	}
 
 	//////////////////
 	//////////////////

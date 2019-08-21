@@ -29,45 +29,56 @@ import java.util.Map;
  */
 public abstract class Topology {
 
-	protected Map<Integer, ArrayList<Double>> verticesCoordinates;
+	protected Map<Integer, Double[]> verticesCoordinates;
 
-	protected Map<Integer, ArrayList<Integer>> elementsVertices;
+	protected Map<Integer, Integer[]> elementsVertices;
 
 	protected Map<Integer, Integer[]> borderEdgesVertices;
+	
+	protected Map<Integer, Integer> borderEdgesLabel;
 
 	protected boolean checkData = false;
 	
-	protected Map<Integer, Integer> l;
+	protected Map<Integer, Integer> ll;
 	
-	protected Map<Integer, Integer> r;
+	protected Map<Integer, Integer> rr;
+	
+	protected Map<Integer, Integer> edgeBoundaryBCType;
+	
+	protected Map<Integer, Integer> edgeBoundaryBCValue;
 	
 	protected Map<Integer, Integer[]> gamma_j;
 	
 	protected Map<Integer, ArrayList<Integer>> s_i;
 	
+	protected Map<Integer, ArrayList<Integer>> p;
+
+	protected static int[] temp_edgeExtreme = new int[2];
 	
 	public abstract void defineTopology();
 	
 	
 	
-	public void set(Map<Integer, ArrayList<Double>> verticesCoordinates, Map<Integer, ArrayList<Integer>> elementsVertices,
-			Map<Integer, Integer[]> borderEdgesVertices, boolean checkData) {
-		
+	public void set(Map<Integer, Double[]> verticesCoordinates, Map<Integer, Integer[]> elementsVertices,
+			Map<Integer, Integer[]> borderEdgesVertices, Map<Integer, Integer> borderEdgesLabel,  boolean checkData) {
+
 		this.verticesCoordinates = verticesCoordinates;
 		this.elementsVertices = elementsVertices;
 		this.borderEdgesVertices = borderEdgesVertices;
-		
+		this.borderEdgesLabel = borderEdgesLabel;
+		this.checkData = checkData;
+
 	}
 	
 	
 	public Map<Integer, Integer> getL(){
-		return l;
+		return ll;
 	}
 	
 	
 	
 	public Map<Integer, Integer> getR(){
-		return r;
+		return rr;
 	}
 
 	
@@ -81,6 +92,65 @@ public abstract class Topology {
 	public Map<Integer, ArrayList<Integer>> getSi(){
 		return s_i;
 	}
+	
+	
+	
+	public Map<Integer, Integer> getEdgeBoundaryBCType(){
+		return edgeBoundaryBCType;
+	}
+	
+	
+	
+	
+	public Map<Integer, Integer> getEdgeBoundaryBCValue(){
+		return edgeBoundaryBCValue;
+	}
+	
+	
+	
+	protected int[] sort2( int vertex0, int vertex1 ) {
+		if(vertex0>vertex1) {
+			temp_edgeExtreme[0] = vertex1;
+			temp_edgeExtreme[1] = vertex0;
+		} else {
+			temp_edgeExtreme[0] = vertex0;
+			temp_edgeExtreme[1] = vertex1;
+		}
+		return temp_edgeExtreme;
+	}
+
+
+
+	protected boolean isEqual(int[] edgeExtreme0, int[] edgeExtreme1) {
+		boolean isEqual = true;
+		for(int i=0; i<2; i++) {
+			if(edgeExtreme0[i] != edgeExtreme1[i]) {
+				isEqual = false;
+				return isEqual;
+			}
+		}
+		return isEqual;
+	}
+
+
+
+	protected int elementInVector( int[] edgeExtreme, int[][] temp_Gamma_j, int N_ins, int N_edges) {
+		int tmp_elementInVector;
+		if(N_ins==0) {
+			tmp_elementInVector = 0;
+			//return 0;
+		} else {
+			tmp_elementInVector = 0;
+			for(int i=0; i<=N_ins ; i++) {
+				if(isEqual(edgeExtreme, temp_Gamma_j[i]))
+					tmp_elementInVector = i;
+				//return i;
+			}
+		} 
+
+		return tmp_elementInVector;
+	}
+	
 	
 	
 }

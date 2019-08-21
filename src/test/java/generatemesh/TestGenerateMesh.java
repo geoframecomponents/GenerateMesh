@@ -30,7 +30,7 @@ public class TestGenerateMesh {
 	public void Test() throws Exception {
 
 		//String fileName = "resources/input/square_with_subdomain_100.msh";
-		String fileName = "resources/input/layer.msh";
+		String fileName = "resources/input/square11.msh";
 
 		String splitter = " ";
 
